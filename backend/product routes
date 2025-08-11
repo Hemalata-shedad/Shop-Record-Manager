@@ -1,0 +1,43 @@
+import express from 'express';
+import Product from '../models/product.js';
+
+const router = express.Router();
+
+
+router.get('/', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET all products
+router.get('/', async (req, res) => {
+  const products = await Product.find();
+  res.json(products);
+});
+
+// POST new product
+router.post('/', async (req, res) => {
+  const newProduct = new Product(req.body);
+  const saved = await newProduct.save();
+  res.status(201).json(saved);
+});
+
+// PUT update product
+router.put('/:id', async (req, res) => {
+  const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(updated);
+});
+
+// DELETE product
+router.delete('/:id', async (req, res) => {
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Product deleted' });
+});
+
+export default router;
+
+
